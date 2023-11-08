@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Email template 2FA -->
+        <record id="2fa_email" model="mail.template">
+            <field name="name">Two Factor Authentication Mail</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="email_from">${(user.email) | safe}</field>
+            <field name="partner_to">${object.partner_id.id or ''}</field>
+            <field name="subject">Authentication Mail</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Dear ${object.name},</p>
+                    <p>
+                        Authentication enabled for your account. below is your secret key and QR code. Do not share it with anyone.
+                    </p>
+                    <p>
+                        <font color="red">Save this QR code or Secret key in safe place to further use.</font>
+                    </p>
+                    <p>Secret Key: ${object.secret_key}</p>
+                    <div style="text-align: center">
+                       <img src="data:image/png;base64,${ctx.get('img')}" style="vertical-align:middle;border-left-width:0px;border-bottom-width:0px;border-right-width:0px;border-top-width:0px;width: 350px;height: 350px;" alt="QR Code" title="QR Code"/>
+                    </div>
+                </div>
+            </field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+        <!-- Email template 2FA Mail -->
+        <record id="2fa_code_email" model="mail.template">
+            <field name="name">Two Factor Mail Authentication Mail</field>
+            <field name="model_id" ref="base.model_res_users"/>
+            <field name="email_from">${(user.email) | safe}</field>
+            <field name="partner_to">${object.partner_id.id or ''}</field>
+            <field name="subject">Two Factor Authentication code</field>
+            <field name="body_html" type="html">
+                <div>
+                    <p>Dear ${object.name},</p>
+                    <p>
+                        Authentication enabled for your account. below is your Authentication Code Do not share it with anyone.
+                    </p>
+                    <p>Authentication Code : ${ctx.get('tootp_now')}</p>
+                </div>
+            </field>
+            <field name="user_signature" eval="False"/>
+            <field name="auto_delete" eval="False"/>
+        </record>
+
+    </data>
+</odoo>

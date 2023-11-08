@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <!-- Inherited Form view of user -->
+    <record id="sync_2fa_view_users_form" model="ir.ui.view">
+        <field name="name">res.users.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <header>
+                <button name="send_2fa_mail" string="Send 2FA Mail" type="object" class="oe_highlight" attrs="{'invisible': [('user_2f_enable_status', '=', False)]}"/>
+            </header>
+            <xpath expr="//notebook" position="inside">
+                <page string='2FA Authentication'>
+                    <group>
+                        <group>
+                            <field name="user_2f_enable_status" widget="boolean_toggle"/>
+                            <field name="secret_key" readonly="1" attrs="{'invisible': ['|', ('secret_key', '=', ''), ('user_2f_enable_status', '=', False)]}"/>
+                        </group>
+                        <group  attrs="{'invisible': [('user_2f_enable_status', '=', False)]}">
+                            <div class="row">
+                                <div class="col-12 col-lg-12 d-flex o_setting_box">
+                                    <div class="o_setting_left_pane border-right col-lg-6">
+                                        <label for="time_limit"/>
+                                    </div>
+                                    <div class="o_setting_right_pane col-lg-6">
+                                        <field name="time_limit" attrs="{'required': [('user_2f_enable_status', '=', True)]}"/>
+                                        <div class="row">
+                                            <div class="col-lg-8 text-muted">
+                                                Up to 900 seconds.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                    <field name="qrcode" widget="image" width="250px" height="250px" attrs="{'invisible': [('user_2f_enable_status', '=', False)]}"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherited Search view of user -->
+    <record id="sync_2fa_view_users_search" model="ir.ui.view">
+        <field name="name">res.users.search</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_search"/>
+        <field name="arch" type="xml">
+            <filter name="no_share" position="after">
+                <filter name="user_2f_enable_status" string="2FA Users" domain="[('user_2f_enable_status','=',True)]"/>
+            </filter>
+        </field>
+    </record>
+
+    <!-- Inherited view for the preference -->
+    <record id="view_users_form_simple_modif" model="ir.ui.view">
+        <field name="name">res.users.preferences.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <group name="preferences" position="after">
+                <group name="2fa_authentication" string="2FA Authentication">
+                    <field name="user_2f_enable_status" widget="boolean_toggle" readonly="0"/>
+                </group>
+                <field name="qrcode" nolabel="1" widget="image" width="250px" height="250px" attrs="{'invisible': [('user_2f_enable_status', '=', False)]}"/>
+            </group>
+        </field>
+    </record>
+
+</odoo>
